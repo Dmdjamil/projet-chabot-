@@ -27,7 +27,7 @@ def preprocess(text):
     tokens = word_tokenize(text)
 
     words = [word for word in tokens if word.isalnum()]
-    words = [word for word in words if word not in stopwords.words('english')]
+    words = [word for word in words if word not in stopwords.words('french')]
 
     return " ".join(words)
 

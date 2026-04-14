@@ -77,6 +77,6 @@ if st.button("Analyser"):
         st.success("😊 Sentiment Positif")
     elif prediction == 0:
         st.error("😡 Sentiment Négatif")
-    else prediction != 0 or prediction != 1:
-        st.texte("Bonjour")
+    elif prediction != 0 or prediction != 1:
+        st.write("Bonjour")
 

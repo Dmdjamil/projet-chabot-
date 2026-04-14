@@ -42,7 +42,7 @@ data = {
         "mauvais",
         "content",
         "triste",
-        "bon",
+        "excellente",
         
     ],
     "label": [1, 1, 0, 0, 1, 0,1]

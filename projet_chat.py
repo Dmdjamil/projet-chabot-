@@ -36,14 +36,16 @@ def preprocess(text):
 # -----------------------------
 data = {
     "text": [
-        "I love this product",
-        "This is amazing",
-        "I hate this",
-        "Very bad experience",
-        "I am happy",
-        "I am sad"
+        "j aime",
+        "incroyable",
+        "j aime pas",
+        "mauvais",
+        "content",
+        "triste",
+        "bon",
+        
     ],
-    "label": [1, 1, 0, 0, 1, 0]
+    "label": [1, 1, 0, 0, 1, 0,1]
 }
 
 df = pd.DataFrame(data)

@@ -12,13 +12,13 @@ import string
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 
-# Télécharger NLTK
-nltk.download('punkt')
-nltk.download('stopwords')
-
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import nltk
 
+nltk.download('punkt')
+nltk.download('punkt_tab')  # 🔥 très important (nouvelle version NLTK)
+nltk.download('stopwords')
 # -----------------------------
 # Nettoyage du texte
 # -----------------------------

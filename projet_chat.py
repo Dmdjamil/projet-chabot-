@@ -11,10 +11,11 @@ from sklearn.naive_bayes import MultinomialNB
 # -----------------------------
 # Télécharger ressources NLTK
 # -----------------------------
+
 nltk.download('punkt')
+nltk.download('punkt_tab')   # 🔥 AJOUT IMPORTANT
 nltk.download('stopwords')
 nltk.download('wordnet')
-
 # -----------------------------
 # Initialisation NLP
 # -----------------------------

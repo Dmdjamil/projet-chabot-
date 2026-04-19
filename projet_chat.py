@@ -23,6 +23,37 @@ stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 stemmer = PorterStemmer()
 
+#fichier movie
+
+movies_df = pd.read_csv("movies.csv")
+
+#Selection du film
+st.subheader("🎬 Choisissez un film")
+movie_selected = st.selectbox(
+    "Liste des films",
+    movies_df["title"]
+)
+
+# Afficher description
+description = movies_df[movies_df["title"] == movie_selected]["description"].values[0]
+st.write("📖 Description :", description)
+
+#Avis utilisateur
+st.subheader("💬 Donnez votre avis")
+
+user_review = st.text_area("Votre impression sur le film")
+
+#Analyse
+if st.button("Analyser mon avis"):
+    if user_review.strip() == "":
+        st.warning("Veuillez écrire un avis.")
+    else:
+        result, clean_text = predict(user_review)
+
+        st.success(f"Sentiment : {result}")
+        st.info(f"Texte nettoyé : {clean_text}")
+
+
 # -----------------------------
 # Fonction de prétraitement
 # -----------------------------
@@ -113,3 +144,12 @@ st.sidebar.write("Tu peux ajouter :")
 st.sidebar.write("- Decision Tree")
 st.sidebar.write("- Upload CSV")
 st.sidebar.write("- Deep Learning")
+
+#sauvegarder les avis
+new_data = pd.DataFrame({
+    "film": [movie_selected],
+    "review": [user_review],
+    "sentiment": [result]
+})
+
+new_data.to_csv("reviews.csv", mode='a', header=False, index=False)

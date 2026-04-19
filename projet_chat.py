@@ -20,10 +20,10 @@ st.set_page_config(page_title="🎬 NLP Movies App", layout="centered")
 # -----------------------------
 @st.cache_resource
 def load_nltk():
-    nltk.download('punkt')
-    nltk.download('punkt_tab')
-    nltk.download('stopwords')
-    nltk.download('wordnet')
+    nltk.download('punkt', quiet=True)
+    nltk.download('punkt_tab', quiet=True)
+    nltk.download('stopwords', quiet=True)
+    nltk.download('wordnet', quiet=True)
 
 load_nltk()
 
@@ -34,38 +34,34 @@ stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 stemmer = PorterStemmer()
 
-# -----------------------------
-# Preprocess
-# -----------------------------
 def preprocess(text):
     text = text.lower()
     tokens = word_tokenize(text)
-
-    tokens = [w for w in tokens if w.isalnum()]
-    tokens = [w for w in tokens if w not in stop_words]
-
+    tokens = [w for w in tokens if w.isalnum() and w not in stop_words]
     tokens = [lemmatizer.lemmatize(w) for w in tokens]
     tokens = [stemmer.stem(w) for w in tokens]
-
     return " ".join(tokens)
 
 # -----------------------------
-# Model training
+# Model training (utilise cache_data car on manipule des données)
 # -----------------------------
-@st.cache_resource
+@st.cache_data
 def train_model():
-    df = pd.read_csv("data.csv")
+    try:
+        df = pd.read_csv("data.csv")
+        df["clean_text"] = df["text"].apply(preprocess)
 
-    df["clean_text"] = df["text"].apply(preprocess)
+        vectorizer = TfidfVectorizer()
+        X = vectorizer.fit_transform(df["clean_text"])
+        y = df["label"]
 
-    vectorizer = TfidfVectorizer()
-    X = vectorizer.fit_transform(df["clean_text"])
-    y = df["label"]
+        model = MultinomialNB()
+        model.fit(X, y)
 
-    model = MultinomialNB()
-    model.fit(X, y)
-
-    return model, vectorizer
+        return model, vectorizer
+    except FileNotFoundError:
+        st.error("❌ Fichier **data.csv** introuvable. Veuillez le placer dans le dossier de l'app.")
+        st.stop()
 
 model, vectorizer = train_model()
 
@@ -76,42 +72,41 @@ def predict(text):
     clean = preprocess(text)
     vect = vectorizer.transform([clean])
     pred = model.predict(vect)[0]
-
     return ("😊 Positif" if pred == 1 else "😡 Négatif"), clean
 
 # -----------------------------
-# UI TITLE
+# UI
 # -----------------------------
 st.title("🎬 Analyse de Films avec NLP")
 
-# -----------------------------
-# LOAD MOVIES
-# -----------------------------
-movies_df = pd.read_csv("movies.csv")
+# Load movies
+try:
+    movies_df = pd.read_csv("movies.csv")
+except FileNotFoundError:
+    st.error("❌ Fichier **movies.csv** introuvable.")
+    st.stop()
 
 st.subheader("🎬 Choisissez un film")
-movie_selected = st.selectbox("Liste des films", movies_df["title"])
+movie_selected = st.selectbox("Liste des films", movies_df["title"].unique())
 
 description = movies_df[movies_df["title"] == movie_selected]["description"].values[0]
-st.write("📖 Description :", description)
+st.write("📖 **Description :**", description)
 
 # -----------------------------
-# USER REVIEW
+# User review
 # -----------------------------
 st.subheader("💬 Donnez votre avis")
-user_review = st.text_area("Votre impression sur le film")
+user_review = st.text_area("Votre impression sur le film", height=150)
 
-# -----------------------------
-# ANALYSIS BUTTON
-# -----------------------------
-if st.button("Analyser mon avis"):
-    if user_review.strip() == "":
-        st.warning("Veuillez écrire un avis.")
+if st.button("🔍 Analyser mon avis", type="primary"):
+    if not user_review.strip():
+        st.warning("Veuillez écrire un avis avant d'analyser.")
     else:
         result, clean_text = predict(user_review)
 
-        st.success(f"Sentiment : {result}")
-        st.info(f"Texte nettoyé : {clean_text}")
+        st.success(f"**Sentiment détecté :** {result}")
+        with st.expander("Voir le texte nettoyé (préprocessing)"):
+            st.code(clean_text, language="text")
 
         # Save review
         new_data = pd.DataFrame({
@@ -120,86 +115,11 @@ if st.button("Analyser mon avis"):
             "sentiment": [result]
         })
 
-        if not os.path.exists("reviews.csv"):
-            new_data.to_csv("reviews.csv", index=False)
+        file_path = "reviews.csv"
+        if not os.path.exists(file_path):
+            new_data.to_csv(file_path, index=False)
         else:
-            new_data.to_csv("reviews.csv", mode='a', header=False, index=False)
+            new_data.to_csv(file_path, mode='a', header=False, index=False)
 
-        st.success("✅ Avis sauvegardé !")
-
-# -----------------------------
-# SHOW REVIEWS
-# -----------------------------
-st.subheader("📊 Avis sauvegardés")
-if os.path.exists("reviews.csv") and os.path.getsize("reviews.csv") > 0:
-    df_reviews = pd.read_csv("reviews.csv")
-else:
-    df_reviews = pd.DataFrame(columns=["film", "review", "sentiment"])
-
-if os.path.exists("reviews.csv"):
-    df_reviews = pd.read_csv("reviews.csv")
-
-    # filter
-    film_filter = st.selectbox(
-        "Filtrer par film",
-        ["Tous"] + list(df_reviews["film"].unique())
-    )
-
-    if film_filter != "Tous":
-        df_reviews = df_reviews[df_reviews["film"] == film_filter]
-
-    st.dataframe(df_reviews)
-
-    # stats
-    st.subheader("📈 Statistiques")
-
-    st.write("Total avis :", len(df_reviews))
-    st.write("Positifs :", (df_reviews["sentiment"].str.contains("Positif")).sum())
-    st.write("Négatifs :", (df_reviews["sentiment"].str.contains("Négatif")).sum())
-
-else:
-    st.info("Aucun avis sauvegardé pour le moment.")
-
-# -----------------------------
-# SIDEBAR
-# -----------------------------
-st.sidebar.title("📘 À propos")
-st.sidebar.write("""
-App NLP pour analyser les avis de films.
-
-Technologies :
-- Streamlit
-- NLTK
-- TF-IDF
-- Naive Bayes
-""")
-st.subheader("📊 Avis sauvegardés")
-
-def load_reviews():
-    if os.path.exists("reviews.csv") and os.path.getsize("reviews.csv") > 0:
-        return pd.read_csv("reviews.csv")
-    return pd.DataFrame(columns=["film", "review", "sentiment"])
-
-df_reviews = load_reviews()
-
-if df_reviews.empty:
-    st.info("Aucun avis sauvegardé pour le moment.")
-else:
-
-    # filtre
-    film_filter = st.selectbox(
-        "Filtrer par film",
-        ["Tous"] + list(df_reviews["film"].unique())
-    )
-
-    if film_filter != "Tous":
-        df_reviews = df_reviews[df_reviews["film"] == film_filter]
-
-    st.dataframe(df_reviews)
-
-    # stats
-    st.subheader("📈 Statistiques")
-
-    st.write("Total avis :", len(df_reviews))
-    st.write("Positifs :", (df_reviews["sentiment"].str.contains("Positif")).sum())
-    st.write("Négatifs :", (df_reviews["sentiment"].str.contains("Négatif")).sum())
+        st.success("✅ Avis sauvegardé avec succès !")
+        st.rerun()   # Rafraîchit

@@ -11,12 +11,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 
 # -----------------------------
-# CONFIG (TOUJOURS EN PREMIER)
+# CONFIG
 # -----------------------------
-st.set_page_config(page_title="NLP App", layout="centered")
+st.set_page_config(page_title="🎬 NLP Movies App", layout="centered")
 
 # -----------------------------
-# Télécharger ressources NLTK
+# NLTK setup
 # -----------------------------
 @st.cache_resource
 def load_nltk():
@@ -28,14 +28,14 @@ def load_nltk():
 load_nltk()
 
 # -----------------------------
-# Initialisation NLP
+# NLP init
 # -----------------------------
 stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 stemmer = PorterStemmer()
 
 # -----------------------------
-# Prétraitement
+# Preprocess
 # -----------------------------
 def preprocess(text):
     text = text.lower()
@@ -50,7 +50,7 @@ def preprocess(text):
     return " ".join(tokens)
 
 # -----------------------------
-# Modèle
+# Model training
 # -----------------------------
 @st.cache_resource
 def train_model():
@@ -70,7 +70,7 @@ def train_model():
 model, vectorizer = train_model()
 
 # -----------------------------
-# Prédiction
+# Predict function
 # -----------------------------
 def predict(text):
     clean = preprocess(text)
@@ -80,11 +80,13 @@ def predict(text):
     return ("😊 Positif" if pred == 1 else "😡 Négatif"), clean
 
 # -----------------------------
-# UI
+# UI TITLE
 # -----------------------------
-st.title("🎬 Analyse de films avec NLP")
+st.title("🎬 Analyse de Films avec NLP")
 
-# Charger films
+# -----------------------------
+# LOAD MOVIES
+# -----------------------------
 movies_df = pd.read_csv("movies.csv")
 
 st.subheader("🎬 Choisissez un film")
@@ -93,11 +95,15 @@ movie_selected = st.selectbox("Liste des films", movies_df["title"])
 description = movies_df[movies_df["title"] == movie_selected]["description"].values[0]
 st.write("📖 Description :", description)
 
-# Avis
+# -----------------------------
+# USER REVIEW
+# -----------------------------
 st.subheader("💬 Donnez votre avis")
 user_review = st.text_area("Votre impression sur le film")
 
-# Bouton analyse
+# -----------------------------
+# ANALYSIS BUTTON
+# -----------------------------
 if st.button("Analyser mon avis"):
     if user_review.strip() == "":
         st.warning("Veuillez écrire un avis.")
@@ -107,7 +113,7 @@ if st.button("Analyser mon avis"):
         st.success(f"Sentiment : {result}")
         st.info(f"Texte nettoyé : {clean_text}")
 
-        # Sauvegarde sécurisée
+        # Save review
         new_data = pd.DataFrame({
             "film": [movie_selected],
             "review": [user_review],
@@ -122,11 +128,44 @@ if st.button("Analyser mon avis"):
         st.success("✅ Avis sauvegardé !")
 
 # -----------------------------
-# Sidebar
+# SHOW REVIEWS
+# -----------------------------
+st.subheader("📊 Avis sauvegardés")
+
+if os.path.exists("reviews.csv"):
+    df_reviews = pd.read_csv("reviews.csv")
+
+    # filter
+    film_filter = st.selectbox(
+        "Filtrer par film",
+        ["Tous"] + list(df_reviews["film"].unique())
+    )
+
+    if film_filter != "Tous":
+        df_reviews = df_reviews[df_reviews["film"] == film_filter]
+
+    st.dataframe(df_reviews)
+
+    # stats
+    st.subheader("📈 Statistiques")
+
+    st.write("Total avis :", len(df_reviews))
+    st.write("Positifs :", (df_reviews["sentiment"].str.contains("Positif")).sum())
+    st.write("Négatifs :", (df_reviews["sentiment"].str.contains("Négatif")).sum())
+
+else:
+    st.info("Aucun avis sauvegardé pour le moment.")
+
+# -----------------------------
+# SIDEBAR
 # -----------------------------
 st.sidebar.title("📘 À propos")
 st.sidebar.write("""
-- NLP (NLTK)
+App NLP pour analyser les avis de films.
+
+Technologies :
+- Streamlit
+- NLTK
 - TF-IDF
 - Naive Bayes
 """)

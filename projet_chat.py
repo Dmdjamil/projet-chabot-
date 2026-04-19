@@ -131,6 +131,10 @@ if st.button("Analyser mon avis"):
 # SHOW REVIEWS
 # -----------------------------
 st.subheader("📊 Avis sauvegardés")
+if os.path.exists("reviews.csv") and os.path.getsize("reviews.csv") > 0:
+    df_reviews = pd.read_csv("reviews.csv")
+else:
+    df_reviews = pd.DataFrame(columns=["film", "review", "sentiment"])
 
 if os.path.exists("reviews.csv"):
     df_reviews = pd.read_csv("reviews.csv")

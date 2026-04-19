@@ -42,26 +42,22 @@ def preprocess(text):
 # Entraînement modèle
 # -----------------------------
 @st.cache_resource
+import pandas as pd
+
 def train_model():
-    data = {
-        "text": [
-            "I love this movie",
-            "This film was terrible",
-            "Amazing acting and great story",
-            "I hate this movie",
-            "Best movie ever",
-            "Worst film I have seen"
-        ],
-        "label": [1, 0, 1, 0, 1, 0]
-    }
+    df = pd.read_csv("data.csv")
 
-    texts = [preprocess(t) for t in data["text"]]
+    # Nettoyage
+    df["clean_text"] = df["text"].apply(preprocess)
 
+    # Vectorisation
     vectorizer = TfidfVectorizer()
-    X = vectorizer.fit_transform(texts)
+    X = vectorizer.fit_transform(df["clean_text"])
+    y = df["label"]
 
+    # Modèle
     model = MultinomialNB()
-    model.fit(X, data["label"])
+    model.fit(X, y)
 
     return model, vectorizer
 

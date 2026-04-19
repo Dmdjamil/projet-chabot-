@@ -1,6 +1,6 @@
 import streamlit as st
 import nltk
-
+import pandas as pd
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer, PorterStemmer

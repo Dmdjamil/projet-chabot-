@@ -1,82 +1,120 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import streamlit as st
-import pandas as pd
 import nltk
-import string
-
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-import nltk
+from nltk.stem import WordNetLemmatizer, PorterStemmer
 
-nltk.download('punkt')
-nltk.download('punkt_tab')  # 🔥 très important (nouvelle version NLTK)
-nltk.download('stopwords')
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+
 # -----------------------------
-# Nettoyage du texte
+# Télécharger ressources NLTK
+# -----------------------------
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+
+# -----------------------------
+# Initialisation NLP
+# -----------------------------
+stop_words = set(stopwords.words('english'))
+lemmatizer = WordNetLemmatizer()
+stemmer = PorterStemmer()
+
+# -----------------------------
+# Fonction de prétraitement
 # -----------------------------
 def preprocess(text):
     text = text.lower()
     tokens = word_tokenize(text)
 
-    words = [word for word in tokens if word.isalnum()]
-    words = [word for word in words if word not in stopwords.words('french')]
+    tokens = [w for w in tokens if w.isalnum()]
+    tokens = [w for w in tokens if w not in stop_words]
 
-    return " ".join(words)
+    tokens = [lemmatizer.lemmatize(w) for w in tokens]
+    tokens = [stemmer.stem(w) for w in tokens]
 
-# -----------------------------
-# Dataset simple
-# -----------------------------
-data = {
-    "text": [
-        "j aime",
-        "incroyable",
-        "j aime pas",
-        "mauvais",
-        "content",
-        "triste",
-        "excellente",
-        
-    ],
-    "label": [1, 1, 0, 0, 1, 0,1]
-}
-
-df = pd.DataFrame(data)
-df["text"] = df["text"].apply(preprocess)
+    return " ".join(tokens)
 
 # -----------------------------
-# Vectorisation + Modèle
+# Entraînement modèle
 # -----------------------------
-vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(df["text"])
-y = df["label"]
+@st.cache_resource
+def train_model():
+    data = {
+        "text": [
+            "I love this movie",
+            "This film was terrible",
+            "Amazing acting and great story",
+            "I hate this movie",
+            "Best movie ever",
+            "Worst film I have seen"
+        ],
+        "label": [1, 0, 1, 0, 1, 0]
+    }
 
-model = LogisticRegression()
-model.fit(X, y)
+    texts = [preprocess(t) for t in data["text"]]
+
+    vectorizer = TfidfVectorizer()
+    X = vectorizer.fit_transform(texts)
+
+    model = MultinomialNB()
+    model.fit(X, data["label"])
+
+    return model, vectorizer
+
+model, vectorizer = train_model()
+
+# -----------------------------
+# Prédiction
+# -----------------------------
+def predict(text):
+    clean = preprocess(text)
+    vect = vectorizer.transform([clean])
+    pred = model.predict(vect)[0]
+
+    return "😊 Positif" if pred == 1 else "😡 Négatif", clean
 
 # -----------------------------
 # Interface Streamlit
 # -----------------------------
-st.title("💬 Chatbot de Sentiments")
+st.set_page_config(page_title="NLP App", layout="centered")
 
-user_input = st.text_input("Écris un message :")
+st.title("🧠 Analyse de Sentiment (NLP)")
+st.write("Tape un texte pour analyser son sentiment")
+
+# Input utilisateur
+user_input = st.text_area("✍️ Votre texte ici :")
 
 if st.button("Analyser"):
-    clean_text = preprocess(user_input)
-    vector = vectorizer.transform([clean_text])
-    prediction = model.predict(vector)[0]
+    if user_input.strip() == "":
+        st.warning("Veuillez entrer un texte.")
+    else:
+        result, clean_text = predict(user_input)
 
-    if prediction == 1:
-        st.success("😊 Sentiment Positif")
-    elif prediction == 0:
-        st.error("😡 Sentiment Négatif")
-    elif prediction != 0 or prediction != 1:
-        st.write("Bonjour")
+        st.success(f"Résultat : {result}")
+        st.info(f"Texte nettoyé : {clean_text}")
 
+# -----------------------------
+# Sidebar
+# -----------------------------
+st.sidebar.title("📘 À propos")
+st.sidebar.write("""
+Cette application utilise :
+
+- NLP (NLTK)
+- TF-IDF
+- Naive Bayes
+
+Elle permet de classifier un texte en positif ou négatif.
+""")
+
+# -----------------------------
+# Bonus : choix du modèle (optionnel)
+# -----------------------------
+st.sidebar.title("⚙️ Options futures")
+st.sidebar.write("Tu peux ajouter :")
+st.sidebar.write("- Decision Tree")
+st.sidebar.write("- Upload CSV")
+st.sidebar.write("- Deep Learning")

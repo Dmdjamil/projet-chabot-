@@ -43,15 +43,6 @@ st.subheader("💬 Donnez votre avis")
 
 user_review = st.text_area("Votre impression sur le film")
 
-#Analyse
-if st.button("Analyser mon avis"):
-    if user_review.strip() == "":
-        st.warning("Veuillez écrire un avis.")
-    else:
-        result, clean_text = predict(user_review)
-
-        st.success(f"Sentiment : {result}")
-        st.info(f"Texte nettoyé : {clean_text}")
 
 
 # -----------------------------
@@ -95,12 +86,23 @@ model, vectorizer = train_model()
 # -----------------------------
 # Prédiction
 # -----------------------------
+
 def predict(text):
     clean = preprocess(text)
     vect = vectorizer.transform([clean])
     pred = model.predict(vect)[0]
 
     return "😊 Positif" if pred == 1 else "😡 Négatif", clean
+
+#Analyse
+if st.button("Analyser mon avis"):
+    if user_review.strip() == "":
+        st.warning("Veuillez écrire un avis.")
+    else:
+        result, clean_text = predict(user_review)
+
+        st.success(f"Sentiment : {result}")
+        st.info(f"Texte nettoyé : {clean_text}")
 
 # -----------------------------
 # Interface Streamlit

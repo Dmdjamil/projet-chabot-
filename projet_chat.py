@@ -42,8 +42,6 @@ def preprocess(text):
 # Entraînement modèle
 # -----------------------------
 @st.cache_resource
-import pandas as pd
-
 def train_model():
     df = pd.read_csv("data.csv")
 

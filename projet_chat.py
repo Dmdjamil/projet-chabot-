@@ -60,13 +60,13 @@ def train_model():
 
         return model, vectorizer
     except FileNotFoundError:
-        st.error("❌ Fichier **data.csv** introuvable dans le dossier de l'application.")
+        st.error("❌ Fichier **data.csv** introuvable.")
         st.stop()
 
 model, vectorizer = train_model()
 
 # -----------------------------
-# Predict Function
+# Predict
 # -----------------------------
 def predict(text):
     clean = preprocess(text)
@@ -79,10 +79,9 @@ def predict(text):
 # -----------------------------
 st.title("🎬 Analyse de Films avec NLP")
 
-# Load movies
 try:
     movies_df = pd.read_csv("movies.csv")
-    movie_list = movies_df["title"].unique().tolist()
+    movie_list = sorted(movies_df["title"].unique().tolist())
 except FileNotFoundError:
     st.error("❌ Fichier **movies.csv** introuvable.")
     st.stop()
@@ -90,7 +89,7 @@ except FileNotFoundError:
 st.subheader("🎬 Choisissez un film")
 movie_selected = st.selectbox("Liste des films", movie_list)
 
-description = movies_df[movies_df["title"] == movie_selected]["description"].values[0]
+description = movies_df[movies_df["title"] == movie_selected]["description"].iloc[0]
 st.write("📖 **Description :**", description)
 
 # -----------------------------
@@ -101,15 +100,15 @@ user_review = st.text_area("Votre impression sur le film", height=150)
 
 if st.button("🔍 Analyser mon avis", type="primary"):
     if not user_review.strip():
-        st.warning("Veuillez écrire un avis avant d'analyser.")
+        st.warning("Veuillez écrire un avis.")
     else:
         result, clean_text = predict(user_review)
 
         st.success(f"**Sentiment détecté :** {result}")
-        with st.expander("Voir le texte nettoyé"):
-            st.code(clean_text, language=None)
+        with st.expander("Texte nettoyé"):
+            st.code(clean_text)
 
-        # Save review
+        # Save
         new_data = pd.DataFrame({
             "film": [movie_selected],
             "review": [user_review],
@@ -122,28 +121,37 @@ if st.button("🔍 Analyser mon avis", type="primary"):
         else:
             new_data.to_csv(file_path, mode='a', header=False, index=False)
 
-        st.success("✅ Avis sauvegardé avec succès !")
+        st.success("✅ Avis sauvegardé !")
         st.rerun()
 
 # -----------------------------
-# REVIEWS SECTION (Corrigée)
+# REVIEWS SECTION - Version ultra robuste
 # -----------------------------
 st.subheader("📊 Avis sauvegardés")
 
 def load_reviews():
     file_path = "reviews.csv"
+    expected_columns = ["film", "review", "sentiment"]
+
     if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
-        return pd.DataFrame(columns=["film", "review", "sentiment"])
-    
+        return pd.DataFrame(columns=expected_columns)
+
     try:
         df = pd.read_csv(file_path)
+
+        # Si le fichier n'a pas les bonnes colonnes → on le réinitialise
+        if not all(col in df.columns for col in expected_columns):
+            st.warning("Le fichier reviews.csv est mal formé. Il va être réinitialisé.")
+            return pd.DataFrame(columns=expected_columns)
+
+        df = df[expected_columns]                    # garder seulement les colonnes utiles
         df = df.dropna(how='all').reset_index(drop=True)
         return df
+
     except Exception:
-        return pd.DataFrame(columns=["film", "review", "sentiment"])
+        return pd.DataFrame(columns=expected_columns)
 
 
-# ←←← Cette ligne est très importante
 df_reviews = load_reviews()
 
 if df_reviews.empty:
@@ -181,16 +189,8 @@ else:
 # Sidebar
 # -----------------------------
 st.sidebar.title("📘 À propos")
-st.sidebar.info("""
-App NLP pour analyser les avis de films.
+st.sidebar.info("App d'analyse de sentiment sur les avis de films\n\nTechnologies : Streamlit + NLTK + Naive Bayes")
 
-Technologies utilisées :
-- Streamlit
-- NLTK (prétraitement)
-- TF-IDF + Naive Bayes
-""")
-
-# Bouton utile en développement
 if st.sidebar.button("🗑️ Effacer tous les avis"):
     if os.path.exists("reviews.csv"):
         os.remove("reviews.csv")

@@ -135,7 +135,26 @@ def load_reviews():
         return pd.read_csv(file_path)
     return pd.DataFrame(columns=["film", "review", "sentiment"])
 
-df_reviews = load_reviews()
+def load_reviews():
+    file_path = "reviews.csv"
+    
+    if not os.path.exists(file_path):
+        return pd.DataFrame(columns=["film", "review", "sentiment"])
+    
+    # Vérifier si le fichier est vide
+    if os.path.getsize(file_path) == 0:
+        return pd.DataFrame(columns=["film", "review", "sentiment"])
+    
+    try:
+        df = pd.read_csv(file_path)
+        # Nettoyage optionnel : supprimer les lignes complètement vides
+        df = df.dropna(how='all')
+        return df
+    except pd.errors.EmptyDataError:
+        return pd.DataFrame(columns=["film", "review", "sentiment"])
+    except Exception as e:
+        st.error(f"Erreur lors du chargement des avis : {e}")
+        return pd.DataFrame(columns=["film", "review", "sentiment"])
 
 if df_reviews.empty:
     st.info("Aucun avis sauvegardé pour le moment.")

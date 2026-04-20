@@ -150,8 +150,6 @@ def load_reviews():
 
     except Exception:
         return pd.DataFrame(columns=expected_columns)
-
-
 df_reviews = load_reviews()
 
 if df_reviews.empty:

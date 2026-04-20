@@ -122,4 +122,61 @@ if st.button("🔍 Analyser mon avis", type="primary"):
             new_data.to_csv(file_path, mode='a', header=False, index=False)
 
         st.success("✅ Avis sauvegardé avec succès !")
-        st.rerun()   # Rafraîchit
+        st.rerun()   # Rafraîchit l'app pour voir le nouvel avis immédiatement
+
+# -----------------------------
+# Reviews section (une seule fois)
+# -----------------------------
+st.subheader("📊 Avis sauvegardés")
+
+def load_reviews():
+    file_path = "reviews.csv"
+    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+        return pd.read_csv(file_path)
+    return pd.DataFrame(columns=["film", "review", "sentiment"])
+
+df_reviews = load_reviews()
+
+if df_reviews.empty:
+    st.info("Aucun avis sauvegardé pour le moment.")
+else:
+    # Filtre par film
+    film_filter = st.selectbox(
+        "Filtrer par film",
+        ["Tous"] + sorted(df_reviews["film"].unique().tolist())
+    )
+
+    if film_filter != "Tous":
+        filtered_reviews = df_reviews[df_reviews["film"] == film_filter]
+    else:
+        filtered_reviews = df_reviews
+
+    st.dataframe(filtered_reviews, use_container_width=True)
+
+    # Statistiques
+    st.subheader("📈 Statistiques")
+    total = len(filtered_reviews)
+    positives = (filtered_reviews["sentiment"].str.contains("Positif", na=False)).sum()
+    negatives = (filtered_reviews["sentiment"].str.contains("Négatif", na=False)).sum()
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Total avis", total)
+    col2.metric("😊 Positifs", positives, delta=None)
+    col3.metric("😡 Négatifs", negatives, delta=None)
+
+    if total > 0:
+        st.progress(positives / total, text=f"Pourcentage positif : {positives/total:.1%}")
+
+# -----------------------------
+# Sidebar
+# -----------------------------
+st.sidebar.title("📘 À propos")
+st.sidebar.info("""
+Cette application analyse le sentiment des avis de films à l'aide de :
+- **NLTK** (prétraitement)
+- **TF-IDF** + **Naive Bayes**
+
+Les avis sont sauvegardés localement dans `reviews.csv`.
+""")
+
+st.sidebar.caption("Made with ❤️ for NLP learning")

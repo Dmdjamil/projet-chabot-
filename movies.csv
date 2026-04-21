@@ -1,47 +1,31 @@
-Type,titre,annee,realisateur,description
-Film,La Noire de...,1966,Ousmane Sembène,Une jeune Sénégalaise devient bonne à tout faire en France et subit racisme et exploitation, menant à une tragédie.
-Film,Borom Sarret,1963,Ousmane Sembène,Un charretier pauvre à Dakar lutte pour survivre une journée dans la ville post-coloniale.
-Film,Mandabi,1968,Ousmane Sembène,Un homme reçoit un mandat postal mais les démarches administratives tournent au cauchemar.
-Film,Xala,1975,Ousmane Sembène,Un homme d’affaires sénégalais devient impuissant le soir de son troisième mariage, satire de l’élite africaine.
-Film,Touki Bouki,1973,Djibril Diop Mambéty,Un jeune couple rêve de fuir Dakar pour Paris dans une aventure poétique et rebelle.
-Film,Ceddo,1977,Ousmane Sembène,Au 19e siècle, les Ceddo résistent à l’islamisation forcée et à la colonisation.
-Film,Guelwaar,1992,Ousmane Sembène,Un chrétien et un musulman se disputent un corps lors d’un enterrement, satire sociale.
-Film,Faat Kiné,2000,Ousmane Sembène,Une femme indépendante et moderne élève seule ses enfants à Dakar.
-Film,Moolaadé,2004,Ousmane Sembène,Une femme protège des jeunes filles de l’excision dans un village traditionnel.
-Film,Atlantique (Atlantics),2019,Mati Diop,Une jeune femme attend le retour de son amoureux parti en mer ; un film fantastique et social.
-Film,Saloum,2021,Jean Luc Herbulot,Un commando de mercenaires se réfugie dans la région du Saloum et affronte des forces surnaturelles.
-Film,Tirailleurs,2022,Mathieu Vadepied,Un père et son fils sénégalais sont enrôlés de force dans l’armée française pendant la Première Guerre mondiale.
-Film,Banel & Adama,2023,Ramata-Toulaye Sy,Dans un village du nord du Sénégal, une jeune femme défie les traditions pour vivre son amour.
-Film,Félicité,2017,Alain Gomis,Une chanteuse de bar à Kinshasa (co-production) lutte pour sauver son fils après un accident.
-Film,Yao,2018,Philippe Godeau,Un adolescent sénégalais part à la rencontre de son idole, l’acteur Omar Sy.
-Film,Karmen Geï,2001,Joseph Gaï Ramaka,Une adaptation libre et sensuelle de Carmen dans l’univers carcéral féminin de Gorée.
-Film,Hyènes (Hyenas),1992,Djibril Diop Mambéty,Une femme riche revient dans son village et corrompt toute la communauté avec son argent.
-Film,Camp de Thiaroye,1988,Ousmane Sembène,Les tirailleurs sénégalais se révoltent après la Seconde Guerre mondiale et sont massacrés.
-Film,La Pirogue,2012,Moussa Touré,Un groupe de migrants tente la traversée vers l’Europe dans une pirogue.
-Film,Wùlu,2016,Daouda Coulibaly,Un jeune homme entre dans le monde du trafic de drogue au Mali et au Sénégal.
-Film,Dahomey,2024,Mati Diop,Documentaire sur le retour des trésors pillés du royaume du Dahomey.
-Film,Night of the Kings (La Nuit des rois),2020,Philippe Lacôte,Un jeune prisonnier doit raconter une histoire toute la nuit pour survivre.
-Film,Madame Brouette,2002,Moussa Sène Absa,Une veuve lutte pour élever ses enfants dans les quartiers populaires.
-Film,Le Franc,1994,Djibril Diop Mambéty,Court-métrage satirique sur un homme qui gagne à la loterie mais perd son billet.
-Film, Emitaï,1971,Ousmane Sembène,Les villageois diola résistent à la réquisition de riz par l’armée française pendant la WWII.
-Série,Maîtresse d'un homme marié,2019-,Marodi TV,Une jeune femme devient la maîtresse d’un homme marié et affronte les conséquences sociales.
-Série,Baabel,2022-,Evenprod / Marodi,Drame familial intense centré sur les relations toxiques et les secrets.
-Série,Bété Bété,-,Evenprod,Série comique et sociale très populaire au Sénégal.
-Série,Cœurs Brisés,-,Evenprod,Drame romantique sur les déceptions amoureuses.
-Série,Infidèles,-,Evenprod,Exploration des infidélités dans le couple moderne sénégalais.
-Série,Muñël,-,Marodi TV,Série dramatique sur la résilience et les épreuves de la vie.
-Série,Pod et Marichou,-,Marodi TV,Série humoristique culte sur un couple atypique.
-Série,Golden,-,Marodi TV,Drame sur l’ambition, la jalousie et le showbiz.
-Série,Doomi Gaïndé,-,Studio Level,Une des séries les plus appréciées ces dernières années.
-Série,Fassema,-,Popular in 2024-2025,Drame familial à succès récent.
-Série,Lalaké,-,Série sociale et politique très suivie.
-Série,Xew Xew,-,Evenprod,Série dramatique.
-Série,Watt Gaal,-,Evenprod,Drame sentimental.
-Série,Salma,-,Série primée aux Gainde Awards.
-Série,Adja,-,Série familiale populaire.
-Série,Déchéances,-,Evenprod,Drame sur la chute sociale.
-Série,Jeux de Dames,-,Série récente très commentée.
-Série,Promesses,-,Série dramatique acclamée.
-Série,Crédule,-,Marodi TV,Série comique/dramatique.
-Série,Doomu Baay,-,Marodi TV,Série familiale.
-Série,Mère et Mensonges,-,Marodi TV,Nouveau drame à succès.
+titre,type,annee,realisateur,description
+Afrique-sur-Seine,Film,1955,Paulin Soumanou Vieyra,Premier film africain réalisé par des étudiants sénégalais à Paris
+Borom Sarret,Film,1963,Ousmane Sembène,Histoire d’un charretier pauvre dans les rues de Dakar
+La Noire de...,Film,1966,Ousmane Sembène,Une jeune sénégalaise travaille pour une famille française et subit le racisme
+Mandabi,Film,1968,Ousmane Sembène,Un homme analphabète tente d’encaisser un mandat postal
+Touki Bouki,Film,1973,Djibril Diop Mambéty,Deux jeunes rêvent de quitter Dakar pour Paris
+Xala,Film,1975,Ousmane Sembène,Un homme riche devient impuissant le jour de son mariage
+Ceddo,Film,1977,Ousmane Sembène,Conflit entre tradition africaine et religion imposée
+Camp de Thiaroye,Film,1988,Ousmane Sembène,Massacre de tirailleurs africains après la guerre
+Hyènes,Film,1992,Djibril Diop Mambéty,Une femme riche revient se venger de son village
+Guelwaar,Film,1992,Ousmane Sembène,Satyre sur l’aide internationale et la religion
+Faat Kiné,Film,2000,Ousmane Sembène,Portrait d’une femme indépendante sénégalaise
+Moolaadé,Film,2004,Ousmane Sembène,Lutte contre l’excision dans un village africain
+The Pirogue,Film,2012,Moussa Touré,Des migrants tentent de rejoindre l’Europe en pirogue
+Atlantics,Film,2019,Mati Diop,Histoire d’amour et migration avec une touche fantastique
+Saloum,Film,2021,Jean Luc Herbulot,Thriller mystique dans le delta du Saloum
+Banel & Adama,Film,2023,Ramata-Toulaye Sy,Amour tragique dans un village isolé
+Terranga,Série,2019,Kalista Sy,Vie quotidienne et relations dans une famille sénégalaise
+Bété Bété,Série,2021,Evenprod,Histoire de traditions et conflits familiaux
+Baabel,Série,2022,Marodi TV,Série dramatique sur pouvoir et secrets
+Pod et Marichou,Série,2018,Marodi TV,Romance moderne entre jeunes dakarois
+Wiri Wiri,Série,2017,Evenprod,Comédie familiale très populaire au Sénégal
+Infidèles,Série,2020,Evenprod,Drames conjugaux et relations complexes
+Déchéances,Série,2019,Evenprod,Chute sociale d’une femme riche
+Adja,Série,2021,Marodi TV,Histoire d’une jeune femme ambitieuse
+Cœurs Brisés,Série,2020,Evenprod,Histoires d’amour et trahison
+Sakho et Mangane,Série,2019,Canal+,Série policière avec enquêteurs à Dakar
+Graine du Pouvoir,Série,2020,Marodi TV,Intrigues politiques et pouvoir
+Famille Sénégalaise,Série,2018,RTS,Chronique familiale humoristique
+Salma,Série,2022,Marodi TV,Drame social autour d’une femme courageuse
+Muñel,Série,2023,Evenprod,Série dramatique sur résilience féminine

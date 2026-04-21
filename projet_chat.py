@@ -50,7 +50,6 @@ def train_model():
     try:
         df = pd.read_csv("data.csv")
         df["clean_text"] = df["text"].apply(preprocess)
-
         vectorizer = TfidfVectorizer()
         X = vectorizer.fit_transform(df["clean_text"])
         y = df["label"]
@@ -68,12 +67,20 @@ model, vectorizer = train_model()
 # -----------------------------
 # Predict
 # -----------------------------
+
 def predict(text):
     clean = preprocess(text)
     vect = vectorizer.transform([clean])
     pred = model.predict(vect)[0]
-    return ("😊 Positif" if pred == 1 else "😡 Négatif"), clean
 
+    if pred == 1:
+        result = "😊 Positif"
+    elif pred == 0:
+        result = "😡 Négatif"
+    else:
+        result = "Bonjour, veuillez donner votre avis !"
+
+    return result, clean
 
 # -----------------------------
 # LOAD MOVIES (nouveau fichier CSV)
@@ -97,7 +104,7 @@ except Exception as e:
     st.error(f"Erreur lors du chargement du CSV : {e}")
     st.stop()
 
-st.subheader("🎬 Choisissez un film ou série")
+st.subheader("🎬 Choisissez un film ou un série")
 movie_selected = st.selectbox("Liste des films et séries sénégalaises", movie_list)
 
 # Récupération propre de la ligne
@@ -116,7 +123,7 @@ st.write(selected_row["description"])
 st.subheader("💬 Donnez votre avis")
 user_review = st.text_area("Votre impression sur le film", height=150)
 
-if st.button("🔍 Analyser mon avis", type="primary"):
+if st.button("🔍 Valider mon avis", type="primary"):
     if not user_review.strip():
         st.warning("Veuillez écrire un avis.")
     else:

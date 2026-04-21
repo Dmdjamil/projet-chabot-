@@ -81,7 +81,7 @@ st.title("🎬 Analyse de Films avec NLP")
 
 try:
     movies_df = pd.read_csv("movies.csv")
-    movie_list = sorted(movies_df["title"].unique().tolist())
+    movie_list = sorted(movies_df["titre"].unique().tolist())
 except FileNotFoundError:
     st.error("❌ Fichier **movies.csv** introuvable.")
     st.stop()
@@ -89,7 +89,7 @@ except FileNotFoundError:
 st.subheader("🎬 Choisissez un film")
 movie_selected = st.selectbox("Liste des films", movie_list)
 
-description = movies_df[movies_df["title"] == movie_selected]["description"].iloc[0]
+description = movies_df[movies_df["titre"] == movie_selected]["type","description"].iloc[0]
 st.write("📖 **Description :**", description)
 
 # -----------------------------

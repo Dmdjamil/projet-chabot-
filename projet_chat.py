@@ -30,7 +30,7 @@ load_nltk()
 # -----------------------------
 # NLP Tools
 # -----------------------------
-stop_words = set(stopwords.words('english','french'))
+stop_words = set(stopwords.words('english') + stopwords.words('french'))
 lemmatizer = WordNetLemmatizer()
 stemmer = PorterStemmer()
 

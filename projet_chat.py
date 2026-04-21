@@ -74,23 +74,41 @@ def predict(text):
     pred = model.predict(vect)[0]
     return ("😊 Positif" if pred == 1 else "😡 Négatif"), clean
 
+
 # -----------------------------
-# Main UI
+# LOAD MOVIES (nouveau fichier CSV)
 # -----------------------------
-st.title("🎬 Analyse de Films avec NLP")
+
+st.title("🎬 Analyse de Films avec NLP") 
 
 try:
     movies_df = pd.read_csv("movies.csv")
+    
+    # Nettoyage important (supprime les espaces en trop)
+    movies_df["titre"] = movies_df["titre"].astype(str).str.strip()
+    
+    # Liste triée pour le selectbox
     movie_list = sorted(movies_df["titre"].unique().tolist())
+    
 except FileNotFoundError:
-    st.error("❌ Fichier **movies.csv** introuvable.")
+    st.error("❌ Fichier **movies.csv** introuvable. Place-le dans le même dossier que ton app.")
+    st.stop()
+except Exception as e:
+    st.error(f"Erreur lors du chargement du CSV : {e}")
     st.stop()
 
-st.subheader("🎬 Choisissez un film")
-movie_selected = st.selectbox("Liste des films", movie_list)
+st.subheader("🎬 Choisissez un film ou série")
+movie_selected = st.selectbox("Liste des films et séries sénégalaises", movie_list)
 
-description = movies_df[movies_df["titre"] == movie_selected]["type","description"].iloc[0]
-st.write("📖 **Description :**", description)
+# Récupération propre de la ligne
+selected_row = movies_df[movies_df["titre"] == movie_selected].iloc[0]
+
+# Affichage enrichi
+st.write(f"**Type :** {selected_row['type']}")
+st.write(f"**Année :** {selected_row.get('annee', 'Non renseignée')}")
+st.write(f"**Réalisateur :** {selected_row.get('realisateur', 'Non renseigné')}")
+st.write("📖 **Description :**")
+st.write(selected_row["description"])
 
 # -----------------------------
 # User Review

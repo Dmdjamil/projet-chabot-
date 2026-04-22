@@ -67,11 +67,18 @@ model, vectorizer = train_model()
 # -----------------------------
 # Predict
 # -----------------------------
-
 def predict(text):
     clean = preprocess(text)
     vect = vectorizer.transform([clean])
+
     pred = model.predict(vect)[0]
+    proba = model.predict_proba(vect)[0]
+
+    confidence = max(proba)  # niveau de confiance
+
+    # 🔥 seuil de confiance (tu peux ajuster)
+    if confidence < 0.6:
+        return "🤔 Veuillez donner un avis plus clair !", clean
 
     if pred == 1:
         result = "😊 Positif"

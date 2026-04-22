@@ -10,14 +10,13 @@ from nltk.stem import WordNetLemmatizer, PorterStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 
-# -----------------------------
 # CONFIG
-# -----------------------------
-st.set_page_config(page_title="🎬 NLP Movies App", layout="centered")
 
-# -----------------------------
+st.set_page_config(page_title="🎬 Sencine", layout="centered")
+
+
 # NLTK setup
-# -----------------------------
+
 @st.cache_resource
 def load_nltk():
     nltk.download('punkt', quiet=True)
@@ -27,9 +26,9 @@ def load_nltk():
 
 load_nltk()
 
-# -----------------------------
+
 # NLP Tools
-# -----------------------------
+
 stop_words = set(stopwords.words('english') + stopwords.words('french'))
 lemmatizer = WordNetLemmatizer()
 stemmer = PorterStemmer()
@@ -42,9 +41,9 @@ def preprocess(text):
     tokens = [stemmer.stem(w) for w in tokens]
     return " ".join(tokens)
 
-# -----------------------------
-# Train Model
-# -----------------------------
+
+#  Model
+
 @st.cache_data
 def train_model():
     try:
@@ -64,9 +63,9 @@ def train_model():
 
 model, vectorizer = train_model()
 
-# -----------------------------
-# Predict
-# -----------------------------
+
+# Prediction
+
 def predict(text):
     clean = preprocess(text)
     vect = vectorizer.transform([clean])
@@ -76,7 +75,7 @@ def predict(text):
 
     confidence = max(proba)  # niveau de confiance
 
-    # 🔥 seuil de confiance (tu peux ajuster)
+    # Seuil de confiance (tu peux ajuster)
     if confidence < 0.6:
         return "🤔 Veuillez donner un avis plus clair !",  clean, confidence
 
@@ -91,7 +90,7 @@ def predict(text):
 # LOAD MOVIES (nouveau fichier CSV)
 # -----------------------------
 
-st.title("🎬 Analyse de Films avec NLP") 
+st.title("🎬 Analyser les films et les series sénégalaises") 
 
 try:
     movies_df = pd.read_csv("movies.csv")
@@ -122,9 +121,9 @@ st.write(f"**Réalisateur :** {selected_row.get('realisateur', 'Non renseigné')
 st.write("📖 **Description :**")
 st.write(selected_row["description"])
 
-# -----------------------------
+
 # User Review
-# -----------------------------
+
 st.subheader("💬 Donnez votre avis")
 user_review = st.text_area("Votre impression sur le film", height=150)
 
@@ -159,8 +158,8 @@ if st.button("🔍 Valider mon avis", type="primary"):
             st.success("✅ Avis sauvegardé !")
             st.rerun()
 # -----------------------------
-# REVIEWS SECTION - Version ultra robuste
-# -----------------------------
+#Enregistrement 
+
 st.subheader("📊 Avis sauvegardés")
 
 def load_reviews():
@@ -217,9 +216,9 @@ else:
     if total > 0:
         st.progress(positives / total, text=f"Pourcentage positif : {positives/total:.1%}")
 
-# -----------------------------
+
 # Sidebar
-# -----------------------------
+
 st.sidebar.title("📘 À propos")
 st.sidebar.info("App d'analyse de sentiment sur les avis de films\n\nTechnologies : Streamlit + NLTK + Naive Bayes")
 

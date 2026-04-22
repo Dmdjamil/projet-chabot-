@@ -78,16 +78,14 @@ def predict(text):
 
     # 🔥 seuil de confiance (tu peux ajuster)
     if confidence < 0.6:
-        return "🤔 Veuillez donner un avis plus clair !", clean
+        return "🤔 Veuillez donner un avis plus clair !",  clean, confidence
 
     if pred == 1:
         result = "😊 Positif"
-    elif pred == 0:
-        result = "😡 Négatif"
     else:
-        result = "Bonjour, veuillez donner votre avis !"
+        result = "😡 Négatif"
 
-    return result, clean
+    return result, clean, confidence
 
 # -----------------------------
 # LOAD MOVIES (nouveau fichier CSV)
@@ -134,28 +132,32 @@ if st.button("🔍 Valider mon avis", type="primary"):
     if not user_review.strip():
         st.warning("Veuillez écrire un avis.")
     else:
-        result, clean_text = predict(user_review)
+        result, clean_text, confidence = predict(user_review)
 
         st.success(f"**Sentiment détecté :** {result}")
+        st.write(f"Confiance : {confidence:.2f}")
+
         with st.expander("Texte nettoyé"):
             st.code(clean_text)
 
-        # Save
-        new_data = pd.DataFrame({
-            "film": [movie_selected],
-            "review": [user_review],
-            "sentiment": [result]
-        })
-
-        file_path = "reviews.csv"
-        if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
-            new_data.to_csv(file_path, index=False)
+        # ❌ NE PAS SAUVEGARDER SI PAS CLAIR
+        if confidence < 0.6:
+            st.warning("⚠️ Avis non enregistré car il n’est pas assez clair.")
         else:
-            new_data.to_csv(file_path, mode='a', header=False, index=False)
+            new_data = pd.DataFrame({
+                "film": [movie_selected],
+                "review": [user_review],
+                "sentiment": [result]
+            })
 
-        st.success("✅ Avis sauvegardé !")
-        st.rerun()
+            file_path = "reviews.csv"
+            if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
+                new_data.to_csv(file_path, index=False)
+            else:
+                new_data.to_csv(file_path, mode='a', header=False, index=False)
 
+            st.success("✅ Avis sauvegardé !")
+            st.rerun()
 # -----------------------------
 # REVIEWS SECTION - Version ultra robuste
 # -----------------------------
